@@ -52,7 +52,9 @@ class Network(object):
         #attention module 2
         input_split = tf.split(axis = 0, num_or_size_splits = self.batch_size, value = input_x)
         q1_split = tf.split(axis = 0, num_or_size_splits = self.batch_size, value = tanh)
-        a1 = [tf.tensordot(features[i], q1_split[i], 1) for i in range(self.batch_size)]
+        #print(features[0].shape, q1_split[0].shape) # rafael
+        #a1 = [tf.tensordot(features[i], q1_split[i], 1) for i in range(self.batch_size)]
+        a1 = [tf.tensordot(features[i], tf.reshape(q1_split[i],(512,)), 1) for i in range(self.batch_size)] # rafael
         a1_fusion = tf.concat(axis = 0, values = a1)
         e1 = tf.nn.softmax(a1_fusion)
         temp1 = tf.split(axis = 0, num_or_size_splits = self.batch_size, value = e1)
@@ -83,7 +85,9 @@ class Network(object):
         loss = tf.reduce_mean(loss)
         tf.summary.scalar("loss", loss)
 
-        optim = tf.train.RMSPropOptimizer(learning_rate = 0.001).minimize(loss)
+        #optim = tf.train.RMSPropOptimizer(learning_rate = 0.001).minimize(loss)
+        #optim = tf.train.RMSPropOptimizer(learning_rate = 0.01).minimize(loss) #rafael
+        optim = tf.train.AdamOptimizer(learning_rate = 0.001).minimize(loss)
 
         sess = tf.Session()
         sess.run(tf.global_variables_initializer())
@@ -105,7 +109,7 @@ class Network(object):
 
 
 if __name__ == "__main__":
-    filename = "./YoutubeFaces.mat"
+    filename = "./YoutubeFaces_arcface.mat"
     batch_size = 128
     class_num = 1595
     net = Network(batch_size, 512, class_num, 5)

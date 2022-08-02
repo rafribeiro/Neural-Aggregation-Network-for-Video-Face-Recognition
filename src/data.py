@@ -28,7 +28,7 @@ class Data(object):
         flag = 0
         f = open("dataset.txt", 'w')
         not_include = ["__version__", "__globals__", "__header__"] # scipy.io.savemat save these unrelevant information
-        for k, v in dataset.iteritems():
+        for k, v in dataset.items():
             if k not in not_include:
                 label = [0] * self.class_num
                 #print flag
@@ -65,9 +65,9 @@ class Data(object):
 
 
 if __name__ == "__main__":
-    filename = "./YoutubeFaces.mat"
+    filename = "./YoutubeFaces_arcface.mat"
     dataset = Data(filename, 3, 1595) 
     dataset.load_feature()
     train_features, train_label = dataset.next_batch(5)
-    print train_features, train_label
+    print(train_features, train_label)
 
